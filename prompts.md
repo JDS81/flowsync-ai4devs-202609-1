@@ -158,3 +158,16 @@ la justificacion es que crei que era mas operativa el e2e del flujo
 ```
 
 **Qué salió:** el agente añadió la justificación a la Parte B, junto a los números 8 → 10.
+
+---
+
+## Prompt 13
+
+**Modelo:** Opus 5.5
+**Herramienta:** Claude Code
+
+```
+he creido nececesario, ampliar el alcance del fluo, para poder realizar el E2E completo del flujo
+```
+
+**Qué salió:** el agente cambió la justificación de la Parte B para que use las palabras del usuario en vez de su propia paráfrasis.
