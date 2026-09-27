@@ -12,13 +12,13 @@ En el modelo de datos solo existen el **usuario** y sus tokens de sesión. No ha
 
 1. **¿Qué duele hoy?** Enterarse a tiempo de que ha saltado una alarma en un servicio concreto, y que la matriz de escalado funcione bien durante una guardia.
 2. **¿Quién sale ganando?** Dos tipos de usuario: los compañeros del equipo (los que atienden la alarma) y los managers, que quieren saber qué ocurre, cuándo, con qué frecuencia, quién lo resuelve y en cuánto tiempo.
-3. **¿Qué significa "tiempo real"?** Avisar a la persona de guardia por push y por llamada. Si no es capaz de resolverlo, se ejecuta la matriz de escalado y el aviso pasa al siguiente compañero.
+3. **¿Qué significa "tiempo real"?** Avisar a la persona de guardia por push y por llamada. Si no es capaz de resolverlo, se ejecuta la matriz de escalado y el aviso pasa al siguiente compañero. _Revisado después: se queda solo la llamada, porque cada compañero tiene un teléfono de guardia. El push pasa al NO-alcance._
 4. **¿Sustituye o convive? ¿De dónde sale el estado?** Las alarmas se configuran en los servicios de monitorización, que son los que las disparan cuando se cruzan unos umbrales de aviso acordados con los clientes. FlowSync las recibe; no las crea.
 5. **¿Qué es éxito a una semana? ¿Cuánto construir?** Que las alarmas se resuelvan en menos de 2 horas desde que saltan, y que escalen lo mínimo posible y pocos niveles. Si pasa eso, el conocimiento y los procedimientos definidos funcionan.
 
 **Supuestos** (preguntas sin respuesta, decididas por el agente):
 
-- El escalado se dispara solo si nadie confirma la alarma en X minutos, y además hay un botón para escalar a mano.
+- El escalado se dispara solo si nadie confirma la alarma en X minutos, y además hay un botón para escalar a mano. Una alarma confirmada pero sin resolver no escala sola: se ve en la lista de abiertas con el tiempo que lleva, y ahí se decide escalarla a mano.
 - FlowSync convive con la monitorización actual (es su fuente) y no la sustituye. Los umbrales se siguen definiendo allí, no en FlowSync.
 - Se construye una sola pieza fina y terminada de punta a punta (la alarma entra, avisa, escala y se resuelve), no una base amplia.
 - La parte ITSM de FlowSync **sustituye** a la herramienta ITSM actual para todo lo que nace de una alarma. Si conviviera con ella, el técnico apuntaría lo mismo en dos sitios.
@@ -80,6 +80,6 @@ Cada alarma llega por llamada a una persona concreta, y si esa persona no la cog
    - **ITSM completa (cambios, problemas, peticiones):** la hipótesis es que las alarmas se resuelven en menos de 2 horas con pocos escalados. Nada de eso la valida.
    - **Integraciones propias con cada herramienta de monitorización:** con un único formato genérico ya se comprueba que la alarma entra, avisa y escala. Integrar con Grafana o Datadog no valida nada que el formato genérico no valide ya.
 
-3. **La exclusión de la que menos seguro estoy:** una sola matriz de escalado para todos los servicios. Se contradicen dos cosas: los umbrales se pactan con cada cliente y la alarma es de "un determinado servicio", pero el MVP escala igual para todo. Entraría si en la semana de prueba una alarma escala a alguien que no conoce ese servicio y por eso tarda más de 2 horas.
+3. **La exclusión de la que menos seguro estoy:** tener una matriz de escalado distinta por servicio o por cliente (el MVP usa una sola para todo). Se contradicen dos cosas: los umbrales se pactan con cada cliente y la alarma es de "un determinado servicio", pero el MVP escala igual para todo. Entraría si en la semana de prueba una alarma escala a alguien que no conoce ese servicio y por eso tarda más de 2 horas.
 
 > **Nota:** la IA señaló dos incoherencias que obligaron a cambiar decisiones. Primera: un único teléfono de guardia no permite escalar al siguiente compañero; se resolvió con un teléfono por persona. Segunda: sin una ITSM integrada, el técnico apuntaría lo mismo en dos sitios; se resolvió metiendo la ITSM en el alcance. Además, la ITSM hizo crecer el alcance de 8 a 10 en vez de reducirlo.
