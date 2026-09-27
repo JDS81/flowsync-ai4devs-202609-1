@@ -171,3 +171,16 @@ he creido nececesario, ampliar el alcance del fluo, para poder realizar el E2E c
 ```
 
 **Qué salió:** el agente cambió la justificación de la Parte B para que use las palabras del usuario en vez de su propia paráfrasis.
+
+---
+
+## Prompt 14
+
+**Modelo:** Opus 5.5
+**Herramienta:** Claude Code
+
+```
+me quedo con ellas,  dejalo escrito y en la parte 2 aplia un poco para hacer de 3 a 5 lineas
+```
+
+**Qué salió:** el agente dejó escrito en la Parte B que las líneas 2 y 3 las redactó la IA y el autor las validó. Interpretó "parte 2" como el tramo 1 (el que pide de 3 a 5 líneas) y lo amplió con lo que el MVP aprovecha de lo que ya existe.

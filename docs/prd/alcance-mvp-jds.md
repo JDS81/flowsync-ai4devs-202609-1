@@ -4,7 +4,9 @@
 
 Hoy FlowSync solo resuelve la **identidad**: crear una cuenta (nombre, email y contraseña), iniciar sesión, ver el propio perfil y cerrar sesión. Lo hace tanto en la API como en tres pantallas del frontend (registro, login y perfil).
 
-En el modelo de datos solo existen el **usuario** y sus tokens de sesión. No hay tareas, equipos, estados ni nada de producto: todo el MVP está por construir sobre esa base de usuarios. Tampoco hay ningún mecanismo de actualización en vivo.
+En el modelo de datos solo existen el **usuario** y sus tokens de sesión. No hay tareas, equipos, estados ni nada de producto, y tampoco ningún mecanismo de actualización en vivo.
+
+Qué aprovecha el MVP: las cuentas existentes son los compañeros de guardia y los managers, así que la identidad no se vuelve a especificar. Todo lo demás está por construir: alarmas, guardias, matriz de escalado, llamadas y seguimiento.
 
 ## 2. El interrogatorio
 
@@ -71,7 +73,7 @@ Cada alarma llega por llamada a una persona concreta, y si esa persona no la cog
 
 ## Parte B
 
-> **Borrador del agente, basado en las decisiones de la conversación. Revísalo y reescríbelo con tus palabras: las líneas 2 y 3 tienen que ser tuyas.**
+> **Autoría:** la línea 1 y su justificación son del autor. Las líneas 2 y 3 las redactó la IA a partir de las decisiones tomadas en la conversación, y el autor las ha revisado y validado sin reescribirlas (ver `prompts.md`).
 
 1. **Los dos números.** La IA propuso 8 cosas dentro. Tras mi recorte quedaron 10.
    _Por qué crecí en vez de recortar: he creído necesario ampliar el alcance del flujo para poder realizar el E2E completo del flujo, desde que salta la alarma hasta que se resuelve y se mide._
