@@ -144,4 +144,17 @@ contruye la herramienta ITSM, deja las 8 cosas y empieza a construir la parte b
 ok adelante haz el commit abre el PR
 ```
 
-**Qué salió:** el agente hizo el commit con los dos ficheros y abrió el PR contra el repo del curso.
+**Qué salió:** faltaban la identidad de git, `gh` y las credenciales. Cuando el usuario los configuró, el agente hizo el commit, abrió el PR contra el repo del curso, pasó el revisor adversarial y corrigió tres incoherencias que encontró.
+
+---
+
+## Prompt 12
+
+**Modelo:** Opus 5.5
+**Herramienta:** Claude Code
+
+```
+la justificacion es que crei que era mas operativa el e2e del flujo
+```
+
+**Qué salió:** el agente añadió la justificación a la Parte B, junto a los números 8 → 10.

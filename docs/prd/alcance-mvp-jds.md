@@ -74,6 +74,7 @@ Cada alarma llega por llamada a una persona concreta, y si esa persona no la cog
 > **Borrador del agente, basado en las decisiones de la conversación. Revísalo y reescríbelo con tus palabras: las líneas 2 y 3 tienen que ser tuyas.**
 
 1. **Los dos números.** La IA propuso 8 cosas dentro. Tras mi recorte quedaron 10.
+   _Por qué crecí en vez de recortar: creí que era más operativo tener el flujo completo de punta a punta, desde que salta la alarma hasta que se resuelve y se mide, dentro de la misma herramienta._
 
 2. **Tres cosas que dejé fuera, y por qué:**
    - **Push y otros canales:** la hipótesis es que la alarma siempre llega a una persona, también de noche, y un push no lo garantiza. La llamada sí lo valida; el push no añade nada.
