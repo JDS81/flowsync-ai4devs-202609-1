@@ -206,3 +206,16 @@ Las sesiones no caducan por tiempo: duran hasta que se cierran.
 - WHEN una persona cierra sesión y el servidor no responde o ya no reconocía la sesión
 - THEN la sesión se cierra igualmente en el navegador y la persona llega al inicio de sesión, sin ningún error
 - THEN si el servidor no llegó a recibir la petición, esa sesión sigue siendo válida en el servidor
+
+
+## Parte B: Las tres listas
+
+### 1. Conteo
+- Escenarios escritos por el agente: [Cuenta cuántos #### Scenario hay en tu archivo y pon el número aquí]
+- Escenarios comprobados en código por mí: 1
+
+### 2. Incoherencias
+- El frontend valida que las contraseñas coincidan antes de enviar el formulario, pero la API del backend acepta la petición de registro recibiendo únicamente un campo de contraseña sin comprobar la repetición.
+
+### 3. Duda entre Bug o Contrato
+- El servidor aplica un `trim()` al nombre para eliminar los espacios antes de guardarlo en la base de datos sin notificarlo en la respuesta: no se puede decidir leyendo el código si se trata de un contrato de sanitización intencionado o de una transformación arbitraria.
