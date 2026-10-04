@@ -15,6 +15,7 @@ El registro pide un nombre completo (opcional), un email, una contraseña y la r
 - WHEN una persona envía el formulario de registro con un nombre, un email válido que no está registrado, una contraseña de 8 a 32 caracteres y la misma contraseña repetida
 - THEN el sistema crea la cuenta
 - THEN la persona queda con la sesión iniciada y llega directamente a su perfil
+- THEN el nombre se guarda sin los espacios del principio y del final
 
 #### Scenario: Registro correcto sin nombre
 
@@ -28,11 +29,17 @@ El registro pide un nombre completo (opcional), un email, una contraseña y la r
 - THEN el sistema rechaza el registro y no crea ninguna cuenta
 - THEN junto al campo del email se muestra «Ese email ya está registrado. Inicia sesión en su lugar.»
 
+#### Scenario: Mismo email con distintas mayúsculas
+
+- WHEN ya existe una cuenta con «Ana@example.com» y alguien se registra con «ana@example.com»
+- THEN el sistema lo acepta y crea una segunda cuenta independiente
+
 #### Scenario: Las contraseñas no coinciden
 
 - WHEN la contraseña y su repetición son distintas
-- THEN se rechaza el registro antes de contactar con el servidor
-- THEN junto al campo de repetición se muestra «Las contraseñas no coinciden.»
+- THEN se rechaza el registro antes de contactar con el servidor, aunque haya otros errores en el formulario
+- THEN junto al campo de repetición se muestra solo «Las contraseñas no coinciden.»
+- THEN el servidor también rechaza por su cuenta un registro cuyas contraseñas no coinciden
 
 #### Scenario: Datos con formato inválido
 
@@ -102,13 +109,18 @@ El registro pide un nombre completo (opcional), un email, una contraseña y la r
 
 #### Scenario: Iniciales con nombre de dos o más palabras
 
-- WHEN el nombre completo tiene al menos dos palabras, como «Ana Pérez Gil»
+- WHEN el nombre completo tiene al menos dos palabras separadas por un único espacio, como «Ana Pérez Gil»
 - THEN las iniciales son la primera letra de las dos primeras palabras, en mayúsculas («AP»)
+
+#### Scenario: Iniciales con nombre separado por varios espacios
+
+- WHEN las dos primeras palabras del nombre están separadas por más de un espacio, como «Ana  Pérez»
+- THEN las iniciales se calculan como si fuera una sola palabra: las dos primeras letras en mayúsculas («AN»)
 
 #### Scenario: Iniciales con nombre de una sola palabra
 
 - WHEN el nombre completo es una sola palabra, como «Ana»
-- THEN las iniciales son sus dos primeras letras en mayúsculas («AN»)
+- THEN las iniciales son sus dos primeras letras en mayúsculas («AN»), o solo una si la palabra tiene una única letra
 
 #### Scenario: Iniciales sin nombre
 
@@ -159,6 +171,12 @@ Las sesiones no caducan por tiempo: duran hasta que se cierran.
 - THEN la persona llega al inicio de sesión con el aviso «No se pudo conectar con el servidor. Comprueba que el backend está arrancado.»
 - THEN la sesión guardada no se descarta, de modo que basta con recargar cuando el servidor vuelva para seguir dentro
 
+#### Scenario: Error del servidor al volver
+
+- WHEN al volver a la aplicación el servidor responde con un error interno
+- THEN la persona llega al inicio de sesión con el aviso «Algo ha ido mal en el servidor. Inténtalo de nuevo en un momento.»
+- THEN la sesión guardada no se descarta, igual que con el servidor caído
+
 #### Scenario: El aviso de sesión perdida se sustituye por el del nuevo intento
 
 - WHEN la pantalla de inicio de sesión muestra el aviso de una sesión perdida y la persona intenta entrar de nuevo con un error
@@ -175,9 +193,8 @@ Las sesiones no caducan por tiempo: duran hasta que se cierran.
 #### Scenario: Cerrar sesión
 
 - WHEN una persona pulsa «Cerrar sesión» en su perfil
-- THEN el botón se desactiva y muestra «Cerrando sesión…»
-- THEN la sesión deja de ser válida en el servidor
-- THEN la persona llega a la pantalla de inicio de sesión, sin ningún aviso
+- THEN la persona llega de inmediato a la pantalla de inicio de sesión, sin ningún aviso y sin esperar la respuesta del servidor
+- THEN la sesión deja de ser válida en el servidor, siempre que el servidor reciba la petición
 
 #### Scenario: Solo se cierra la sesión actual
 
@@ -188,3 +205,4 @@ Las sesiones no caducan por tiempo: duran hasta que se cierran.
 
 - WHEN una persona cierra sesión y el servidor no responde o ya no reconocía la sesión
 - THEN la sesión se cierra igualmente en el navegador y la persona llega al inicio de sesión, sin ningún error
+- THEN si el servidor no llegó a recibir la petición, esa sesión sigue siendo válida en el servidor
