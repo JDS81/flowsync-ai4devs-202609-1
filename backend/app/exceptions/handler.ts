@@ -13,6 +13,15 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
+    /**
+     * An unknown route (including `/tasks/abc`, rejected by the numeric
+     * matcher) answers with the API's usual `{ errors }` envelope. Left to the
+     * default renderer, debug mode would dump stack frames and absolute paths.
+     */
+    if ((error as { code?: string } | null)?.code === 'E_ROUTE_NOT_FOUND') {
+      return ctx.response.status(404).send({ errors: [{ message: 'Not found' }] })
+    }
+
     return super.handle(error, ctx)
   }
 

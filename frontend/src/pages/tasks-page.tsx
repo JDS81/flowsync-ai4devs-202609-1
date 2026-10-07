@@ -277,7 +277,13 @@ function TaskRow({ task, onChangeStatus }: TaskRowProps) {
       <Card className="gap-3 py-4">
         <CardContent className="grid gap-3 px-4">
           <div className="min-w-0">
-            <p className="font-medium break-words">{task.title}</p>
+            {/* Abrir la tarea es el único sitio donde aparece su fecha: la
+                fila sigue sin mostrar fechas ni marcas de vencimiento. */}
+            <p className="font-medium break-words">
+              <Link to={`/tasks/${task.id}`} className="hover:underline">
+                {task.title}
+              </Link>
+            </p>
             <p className="text-muted-foreground text-sm">
               Responsable: {task.assignee.fullName ?? 'Sin nombre'}
             </p>
