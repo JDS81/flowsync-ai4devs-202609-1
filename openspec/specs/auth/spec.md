@@ -108,6 +108,11 @@ El sistema SHALL devolver en `GET /api/v1/account/profile` los datos de la cuent
 - **WHEN** el nombre guardado empieza por un espacio o está formado solo por espacios
 - **THEN** `initials` es una cadena vacía
 
+#### Scenario: Iniciales con nombre que termina en espacio
+
+- **WHEN** el nombre guardado es una sola palabra seguida de un espacio, como `Ana `
+- **THEN** `initials` son las dos primeras letras de esa palabra en mayúsculas (`AN`)
+
 #### Scenario: Iniciales sin nombre
 
 - **WHEN** la cuenta no tiene nombre
