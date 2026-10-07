@@ -8,7 +8,7 @@
 ## 2. Regla de vencimiento y día de referencia (backend)
 
 - [ ] 2.1 Añadir `Task#isOverdueOn(today)` (fecha, anterior a hoy y no `done`). Verificar con `npm run typecheck` y, en `node ace repl`, los bordes: ayer → `true`; hoy, mañana o sin fecha → `false`; `done` con fecha pasada → `false`.
-- [ ] 2.2 Crear el helper del día de referencia: lee `X-Timezone`, lo valida con VineJS y una regla de zona IANA basada en Luxon, usa UTC si falta o está vacía y devuelve `DateTime.now().setZone(zone).toISODate()`. Verificar con `npm run typecheck`.
+- [ ] 2.2 Crear el helper del día de referencia: lee `X-Timezone`, normaliza a ausente una cabecera vacía o solo con espacios, la valida con VineJS y una regla de zona IANA basada en Luxon, usa UTC si falta o está vacía y devuelve `DateTime.now().setZone(zone).toISODate()`. Verificar con `npm run typecheck`.
 - [ ] 2.3 Pasar el día de referencia a `TaskTransformer` como argumento extra y exponer `dueDate` (texto o `null`) e `isOverdue`. Verificar con `npm run typecheck`.
 
 ## 3. API (backend)
@@ -24,7 +24,7 @@
   - la regla: ayer, hoy, mañana, sin fecha, `done` con fecha pasada, pasar a `done` conservando la fecha, volver de `done` (vencida), aplazar y quitar;
   - reasignar sin tocar la fecha;
   - `isOverdue` enviado e ignorado;
-  - `X-Timezone` válida, ausente (UTC) y desconocida (422 sin modificar nada);
+  - `X-Timezone` válida, ausente (UTC), vacía o solo con espacios (UTC, no 422) y desconocida (422 sin modificar nada);
   - dos zonas a la vez con veredictos distintos (por ejemplo, `Pacific/Kiritimati` y `Pacific/Pago_Pago` con la fecha de ayer en una de ellas);
   - 401 sin token en la lectura individual.
 - [ ] 3.4 Pasar `npm run lint` y `npm run typecheck` en `backend/` sin errores.

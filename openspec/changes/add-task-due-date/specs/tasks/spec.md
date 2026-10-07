@@ -78,7 +78,7 @@ El sistema SHALL exponer en toda representación de una tarea un booleano `isOve
 - **WHEN** una tarea en `pending` o `in_progress` tiene como fecha el día anterior al de referencia
 - **THEN** `isOverdue` es `true`
 
-#### Scenario: Vencer hoy todavía no es estar vencida
+#### Scenario: Fecha de hoy
 
 - **WHEN** una tarea no hecha tiene como fecha el propio día de referencia
 - **THEN** `isOverdue` es `false`
@@ -88,7 +88,7 @@ El sistema SHALL exponer en toda representación de una tarea un booleano `isOve
 - **WHEN** una tarea tiene una fecha posterior al día de referencia
 - **THEN** `isOverdue` es `false`
 
-#### Scenario: Sin fecha no se vence nunca
+#### Scenario: Sin fecha
 
 - **WHEN** una tarea no tiene fecha, por antigua y pendiente que sea
 - **THEN** `isOverdue` es `false`
@@ -98,7 +98,7 @@ El sistema SHALL exponer en toda representación de una tarea un booleano `isOve
 - **WHEN** una tarea en `done` tiene una fecha anterior al día de referencia
 - **THEN** `isOverdue` es `false`
 
-#### Scenario: Darla por hecha la deja de vencer
+#### Scenario: Pasar a hecha
 
 - **WHEN** una tarea vencida pasa a `done`
 - **THEN** la respuesta trae `isOverdue: false` y la misma `dueDate` que antes
@@ -122,7 +122,7 @@ El sistema SHALL calcular `isOverdue` en el momento de responder cada petición,
 - **WHEN** una tarea no hecha tiene como fecha el día de hoy y se vuelve a consultar después de la medianoche en la zona de referencia, sin que nadie la haya modificado
 - **THEN** la respuesta trae `isOverdue: true`
 
-#### Scenario: Cada persona según su propio día
+#### Scenario: Dos zonas horarias a la vez
 
 - **WHEN** una tarea no hecha tiene una fecha que ya pasó en una zona horaria pero que todavía es hoy en otra, y se consulta a la vez desde ambas
 - **THEN** la consulta desde la primera zona recibe `isOverdue: true` y la de la segunda recibe `isOverdue: false`
@@ -141,7 +141,7 @@ La aplicación web SHALL permitir abrir cada tarea pulsando su título en la lis
 - **WHEN** una persona pulsa el título de una tarea en la lista
 - **THEN** llega a la pantalla de esa tarea
 
-#### Scenario: La fecha no asoma en la lista
+#### Scenario: La lista no muestra fechas
 
 - **WHEN** hay tareas con fecha, algunas vencidas, y una persona mira la lista
 - **THEN** no ve ninguna fecha ni marca de vencimiento en ninguna fila, que siguen mostrando solo título, responsable y estado

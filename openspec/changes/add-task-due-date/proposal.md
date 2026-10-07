@@ -23,12 +23,12 @@ Hoy una tarea no tiene forma de expresar un compromiso de plazo, y nadie descubr
 
 - Notificaciones, recordatorios, recurrencia, y ordenar o filtrar por fecha.
 - La pantalla de detalle completa (editar el título, el estado o el responsable desde ella).
-- Tests de cualquier tipo.
+- Tests de cualquier tipo. Es una decisión explícita de quien encarga el change, aunque el backlog de FS-118 dedica tickets a pruebas (FS-118.2, FS-118.3 y FS-118.5): la verificación se hace a mano con `curl`, el REPL y el navegador, y montar la base de pruebas (R-7) queda para otro change.
 
 ### Puntos abiertos
 
 - **Vista de detalle (PA-6)**: la lectura individual y la pantalla mínima son una decisión provisional para cubrir «al abrir la tarea». La pantalla de detalle completa queda pendiente.
-- **Volver de «Hecho» con la fecha pasada (PA-7)**: como las transiciones son libres, una tarea que vuelve de `done` con la fecha pasada vuelve a estar vencida, porque la regla se evalúa en cada lectura. Que esa vuelta deba permitirse sigue abierto.
+- **Volver de «Hecho» con la fecha pasada (PA-7)**: el resultado ya no está abierto. Por la regla («si y solo si») evaluada en cada lectura, una tarea que vuelve de `done` con la fecha pasada vuelve a estar vencida, y así lo fija la spec. Lo único pendiente de PA-7 es si la vuelta desde «Hecho» debe permitirse; hoy la permite el requisito de transiciones libres, que este change no toca.
 - **Colisiones (PA-8)**: si dos personas cambian la fecha a la vez, gana la última en escribir; qué ve quien pierde sigue sin decidir.
 - **Lista y vencimiento (PA-1)**: el vencimiento no se ve de un vistazo en la lista, por decisión del PRD.
 
