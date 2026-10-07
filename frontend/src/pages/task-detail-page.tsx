@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { AlertCircleIcon, CalendarX2Icon, Loader2Icon } from 'lucide-react'
 import * as api from '@/lib/api'
@@ -31,6 +31,11 @@ export function TaskDetailPage() {
   // la fecha guardada si un cambio falla.
   const [dateValue, setDateValue] = useState('')
   const [isSaving, setSaving] = useState(false)
+  // Último guardado lanzado: si se cambia la fecha dos veces seguidas, solo la
+  // respuesta del último cuenta, aunque la de uno anterior llegue más tarde.
+  const latestSave = useRef(0)
+  // Última versión confirmada por el servidor, para revertir a ella si falla.
+  const confirmed = useRef<Task | null>(null)
 
   const expireIfUnauthorized = useCallback(
     (error: unknown) => {
@@ -51,15 +56,18 @@ export function TaskDetailPage() {
       .getTask(token, taskId)
       .then((loaded) => {
         if (cancelled) return
+        confirmed.current = loaded
         setTask(loaded)
         setDateValue(loaded.dueDate ?? '')
       })
       .catch((error: unknown) => {
         if (cancelled || expireIfUnauthorized(error)) return
         setLoadError(
-          error instanceof ApiError
-            ? error.message
-            : 'No se pudo cargar la tarea.',
+          error instanceof ApiError && error.status === 404
+            ? 'Esta tarea no existe.'
+            : error instanceof ApiError
+              ? error.message
+              : 'No se pudo cargar la tarea.',
         )
       })
 
@@ -78,17 +86,25 @@ export function TaskDetailPage() {
     setFieldError(null)
     setSaveError(null)
     setSaving(true)
+    const saveId = ++latestSave.current
+    const isLatest = () => latestSave.current === saveId
 
     api
       .updateTaskDueDate(token, task.id, dueDate)
       .then((updated) => {
+        confirmed.current = updated
+        if (!isLatest()) return
         setTask(updated)
         setDateValue(updated.dueDate ?? '')
       })
       .catch((error: unknown) => {
         if (expireIfUnauthorized(error)) return
-        // El servidor conserva la fecha anterior: el campo vuelve a ella.
-        setDateValue(task.dueDate ?? '')
+        if (!isLatest()) return
+        // El servidor conserva la fecha anterior: se vuelve a la última
+        // versión confirmada.
+        const previous = confirmed.current ?? task
+        setTask(previous)
+        setDateValue(previous.dueDate ?? '')
         if (error instanceof ApiError && error.fieldErrors.dueDate) {
           setFieldError(error.fieldErrors.dueDate)
         } else {
@@ -99,7 +115,9 @@ export function TaskDetailPage() {
           )
         }
       })
-      .finally(() => setSaving(false))
+      .finally(() => {
+        if (isLatest()) setSaving(false)
+      })
   }
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -171,6 +189,7 @@ export function TaskDetailPage() {
                     className="w-auto"
                     value={dateValue}
                     onChange={handleDateChange}
+                    disabled={isSaving}
                     aria-invalid={Boolean(fieldError)}
                     aria-describedby={fieldError ? 'dueDate-error' : undefined}
                   />
@@ -193,16 +212,20 @@ export function TaskDetailPage() {
 
               {/* Señal propia: texto e icono, no solo color. Si no está
                   vencida no se pinta nada, tampoco por no tener fecha. */}
-              {task.isOverdue && (
-                <Alert variant="destructive" role="status">
-                  <CalendarX2Icon />
-                  <AlertTitle>Vencida</AlertTitle>
-                  <AlertDescription>
-                    La fecha de vencimiento ya ha pasado y la tarea no está
-                    hecha.
-                  </AlertDescription>
-                </Alert>
-              )}
+              {/* La región viva está siempre montada y su contenido cambia: así
+                  los lectores de pantalla anuncian «Vencida» al aparecer. */}
+              <div role="status" aria-live="polite">
+                {task.isOverdue && (
+                  <Alert variant="destructive" role="none">
+                    <CalendarX2Icon />
+                    <AlertTitle>Vencida</AlertTitle>
+                    <AlertDescription>
+                      La fecha de vencimiento ya ha pasado y la tarea no está
+                      hecha.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </div>
             </CardContent>
           </Card>
         )}

@@ -96,9 +96,9 @@ function toApiError(status: number, body: unknown): ApiError {
     return new ApiError('El email o la contraseña no son correctos.', status)
   }
 
-  // La única lectura que puede no encontrar nada es la de una tarea concreta.
+  // Cada pantalla decide cómo nombrar lo que no existe (p. ej. una tarea).
   if (status === 404) {
-    return new ApiError('Esta tarea no existe.', status)
+    return new ApiError('No se ha encontrado lo que buscabas.', status)
   }
 
   if (status === 422 && errors?.length) {

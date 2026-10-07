@@ -8,7 +8,9 @@ import { TASK_STATUSES } from '#models/task'
  */
 const calendarDay = vine.createRule((value, _options, field) => {
   if (typeof value !== 'string' || !DateTime.fromISO(value, { zone: 'utc' }).isValid) {
-    field.report('The {{ field }} field must be a valid calendar day', 'date', field)
+    // Own rule name: `date` would be overridden by VineJS' default
+    // "must be a datetime value" message.
+    field.report('The {{ field }} field must be a valid calendar day', 'calendarDay', field)
   }
 })
 
