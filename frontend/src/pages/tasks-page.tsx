@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { AlertCircleIcon, Loader2Icon } from 'lucide-react'
 import * as api from '@/lib/api'
@@ -28,6 +28,9 @@ export function TasksPage() {
   const [tasks, setTasks] = useState<Task[] | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
+  // Última petición de estado lanzada por tarea: si se pulsa dos veces seguidas,
+  // la respuesta más antigua no puede pisar a la más reciente al llegar tarde.
+  const latestRequest = useRef(new Map<number, number>())
 
   /**
    * Un 401 en cualquier operación de tareas significa que el servidor ya no
@@ -89,11 +92,18 @@ export function TasksPage() {
     setActionError(null)
     replace({ ...task, status })
 
+    const requestId = (latestRequest.current.get(task.id) ?? 0) + 1
+    latestRequest.current.set(task.id, requestId)
+    const isLatest = () => latestRequest.current.get(task.id) === requestId
+
     api
       .updateTaskStatus(token, task.id, status)
-      .then(replace)
+      .then((updated) => {
+        if (isLatest()) replace(updated)
+      })
       .catch((error: unknown) => {
         if (expireIfUnauthorized(error)) return
+        if (!isLatest()) return
         replace(task)
         setActionError(
           error instanceof ApiError
