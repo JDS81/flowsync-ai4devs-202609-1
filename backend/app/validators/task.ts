@@ -1,9 +1,35 @@
 import vine from '@vinejs/vine'
+import { DateTime } from 'luxon'
 import { TASK_STATUSES } from '#models/task'
 
 /**
- * Validator to use when creating a task. The title is the only input: anything
- * else in the body (status, assignee…) is dropped by VineJS.
+ * A calendar day that exists (`2026-02-30` does not). The format itself is
+ * checked by the regex before this rule runs.
+ */
+const calendarDay = vine.createRule((value, _options, field) => {
+  if (typeof value !== 'string' || !DateTime.fromISO(value, { zone: 'utc' }).isValid) {
+    field.report('The {{ field }} field must be a valid calendar day', 'date', field)
+  }
+})
+
+/**
+ * Due date: a calendar day as plain `YYYY-MM-DD` text, never converted to an
+ * instant (that is how a date drifts by a day across time zones). A past day
+ * is accepted on purpose. `null` means "no date"; the bodyparser already turns
+ * an empty string into `null`, so `""` removes the date too.
+ */
+const dueDate = () =>
+  vine
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .use(calendarDay())
+    .nullable()
+    .optional()
+
+/**
+ * Validator to use when creating a task. The title is required and the due
+ * date optional; anything else in the body (status, assignee, isOverdue…) is
+ * dropped by VineJS.
  *
  * `trim()` runs before the length rules, so a title made only of spaces fails
  * `minLength` instead of being stored blank, and the 255 limit is counted
@@ -11,6 +37,7 @@ import { TASK_STATUSES } from '#models/task'
  */
 export const createTaskValidator = vine.create({
   title: vine.string().trim().minLength(1).maxLength(255),
+  dueDate: dueDate(),
 })
 
 /**
@@ -28,16 +55,18 @@ const notNull = vine.createRule(
 )
 
 /**
- * Validator to use when updating a task. Only status and assignee can change,
- * and at least one of them must be present: when both are missing, `status`
- * fails as required.
+ * Validator to use when updating a task. Only status, assignee and due date
+ * can change. "At least one of them" is checked by the controller: VineJS'
+ * `requiredIfMissing` treats `null` as missing, which would reject a body that
+ * only removes the due date.
  */
 export const updateTaskValidator = vine.create({
-  status: vine.enum(TASK_STATUSES).optional().requiredIfMissing('assigneeId'),
+  status: vine.enum(TASK_STATUSES).optional(),
   assigneeId: vine
     .number()
     .withoutDecimals()
     .exists({ table: 'users', column: 'id' })
     .optional()
     .use(notNull()),
+  dueDate: dueDate(),
 })

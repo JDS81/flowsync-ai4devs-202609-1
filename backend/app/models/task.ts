@@ -19,4 +19,16 @@ export default class Task extends TaskSchema {
 
   @belongsTo(() => User, { foreignKey: 'assigneeId' })
   declare assignee: BelongsTo<typeof User>
+
+  /**
+   * The overdue rule, and its only implementation: a task is overdue if and
+   * only if it has a due date, that date is before `today`, and it is not done.
+   *
+   * Both dates are `YYYY-MM-DD` calendar days, so comparing the strings is the
+   * same as comparing the days, with no time zone involved. `today` is the
+   * reference day of whoever is asking; the result is never stored.
+   */
+  isOverdueOn(today: string): boolean {
+    return this.dueDate !== null && this.dueDate < today && this.status !== 'done'
+  }
 }
