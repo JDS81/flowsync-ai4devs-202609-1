@@ -30,3 +30,29 @@ export type LoginPayload = {
   email: string
   password: string
 }
+
+/**
+ * Conjunto cerrado de estados tal y como viajan por la API. En pantalla se
+ * pintan con `TASK_STATUS_LABELS`, nunca con estos identificadores.
+ */
+export type TaskStatus = 'pending' | 'in_progress' | 'done'
+
+/**
+ * Espejo de `TaskTransformer` del backend. Del responsable solo llegan el id y
+ * el nombre: el email no forma parte de la respuesta.
+ */
+export type Task = {
+  id: number
+  title: string
+  status: TaskStatus
+  assignee: { id: number; fullName: string | null }
+  /** Día de calendario `YYYY-MM-DD`, o `null` si la tarea no tiene fecha. */
+  dueDate: string | null
+  /**
+   * Veredicto de vencimiento calculado por el backend para el día de quien
+   * mira. El frontend nunca lo recalcula: solo lo pinta.
+   */
+  isOverdue: boolean
+  createdAt: string
+  updatedAt: string
+}

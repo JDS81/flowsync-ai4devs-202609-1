@@ -1,4 +1,11 @@
-import type { AuthResult, LoginPayload, SignupPayload, User } from '@/lib/types'
+import type {
+  AuthResult,
+  LoginPayload,
+  SignupPayload,
+  Task,
+  TaskStatus,
+  User,
+} from '@/lib/types'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3333'
 
@@ -35,6 +42,8 @@ const FIELD_LABELS: Record<string, string> = {
   email: 'el email',
   password: 'la contraseña',
   passwordConfirmation: 'la confirmación de la contraseña',
+  title: 'el título',
+  dueDate: 'la fecha de vencimiento',
 }
 
 const label = (field?: string) => FIELD_LABELS[field ?? ''] ?? 'el campo'
@@ -45,6 +54,9 @@ const label = (field?: string) => FIELD_LABELS[field ?? ''] ?? 'el campo'
  */
 function translate(error: BackendError): string {
   const { rule, field, meta } = error
+
+  // Cualquier rechazo de la fecha (formato, día inexistente…) se explica igual.
+  if (field === 'dueDate') return 'Introduce una fecha válida.'
 
   switch (rule) {
     case 'database.unique':
@@ -84,6 +96,11 @@ function toApiError(status: number, body: unknown): ApiError {
     return new ApiError('El email o la contraseña no son correctos.', status)
   }
 
+  // Cada pantalla decide cómo nombrar lo que no existe (p. ej. una tarea).
+  if (status === 404) {
+    return new ApiError('No se ha encontrado lo que buscabas.', status)
+  }
+
   if (status === 422 && errors?.length) {
     const fieldErrors: Record<string, string> = {}
     for (const error of errors) {
@@ -102,7 +119,7 @@ function toApiError(status: number, body: unknown): ApiError {
 }
 
 type RequestOptions = {
-  method?: 'GET' | 'POST'
+  method?: 'GET' | 'POST' | 'PATCH'
   body?: unknown
   token?: string | null
 }
@@ -111,7 +128,12 @@ async function request<T>(
   path: string,
   { method = 'GET', body, token }: RequestOptions = {},
 ): Promise<T> {
-  const headers: Record<string, string> = { Accept: 'application/json' }
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+    // El servidor decide si una tarea está vencida según el día de quien
+    // mira: le decimos en qué zona horaria está este navegador.
+    'X-Timezone': Intl.DateTimeFormat().resolvedOptions().timeZone,
+  }
   if (body !== undefined) headers['Content-Type'] = 'application/json'
   if (token) headers.Authorization = `Bearer ${token}`
 
@@ -163,4 +185,49 @@ export function logout(token: string): Promise<void> {
   return request('/api/v1/account/logout', { method: 'POST', token }).then(
     () => undefined,
   )
+}
+
+export function listTasks(token: string): Promise<Task[]> {
+  return request<{ data: Task[] }>('/api/v1/tasks', { token }).then(
+    (response) => response.data,
+  )
+}
+
+export function createTask(token: string, title: string): Promise<Task> {
+  return request<{ data: Task }>('/api/v1/tasks', {
+    method: 'POST',
+    body: { title },
+    token,
+  }).then((response) => response.data)
+}
+
+export function updateTaskStatus(
+  token: string,
+  id: number,
+  status: TaskStatus,
+): Promise<Task> {
+  return request<{ data: Task }>(`/api/v1/tasks/${id}`, {
+    method: 'PATCH',
+    body: { status },
+    token,
+  }).then((response) => response.data)
+}
+
+export function getTask(token: string, id: number): Promise<Task> {
+  return request<{ data: Task }>(`/api/v1/tasks/${id}`, { token }).then(
+    (response) => response.data,
+  )
+}
+
+/** `null` quita la fecha. */
+export function updateTaskDueDate(
+  token: string,
+  id: number,
+  dueDate: string | null,
+): Promise<Task> {
+  return request<{ data: Task }>(`/api/v1/tasks/${id}`, {
+    method: 'PATCH',
+    body: { dueDate },
+    token,
+  }).then((response) => response.data)
 }
