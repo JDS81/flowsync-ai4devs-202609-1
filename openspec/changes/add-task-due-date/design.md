@@ -48,7 +48,7 @@ Comprobado en el código antes de diseñar:
 
 ### API
 
-- **`GET /api/v1/tasks/:id`** con matcher numérico y `show` (`findOrFail` + `preload('assignee')`). Con ella son cuatro operaciones. Es la superficie mínima para «al abrir la tarea» (PA-6, abierto).
+- **`GET /api/v1/tasks/:id`** con matcher numérico y `show`, que sigue el mismo patrón que `update`: `Task.find` + 404 con `{ errors: [...] }` (no `findOrFail`, que en modo debug devuelve el stack trace) y precarga del responsable limitada a `id` y `full_name`. Con ella son cuatro operaciones. Es la superficie mínima para «al abrir la tarea» (PA-6, abierto).
 - **Creación**: el validador acepta además `dueDate` opcional y nullable; el resto de campos se siguen descartando.
 - **Actualización**: `status` deja de llevar `requiredIfMissing`. El controlador comprueba que el cuerpo validado trae al menos una de las claves `status`, `assigneeId` o `dueDate` (con `'dueDate' in payload`, que distingue un `null` enviado de una clave ausente). Si no trae ninguna, lanza un error de validación de VineJS (`errors.E_VALIDATION_ERROR`) con el mismo formato que el resto. *Antes de implementarlo*, se comprueba en los `.d.ts` de VineJS si la salida conserva la clave con `null` y cómo se construye ese error; si no la conserva, se mira la clave en `request.body()`.
 - **`isOverdue` en el cuerpo**: no está declarado en ningún validador, así que VineJS lo descarta.
@@ -69,7 +69,7 @@ Comprobado en el código antes de diseñar:
   Solo usa componentes existentes y ninguna dependencia nueva.
 - **Guardado automático**: en `onChange`, si el valor es una fecha completa (cadena no vacía), se envía. Si el input queda vacío con `validity.badInput` (fecha a medio escribir o inexistente), no se envía y se muestra «Introduce una fecha válida.». Si queda vacío sin `badInput` (lo han borrado con el control nativo), equivale a quitar la fecha. Se pinta lo que devuelve el servidor (`dueDate` e `isOverdue`), así que la señal siempre es el veredicto del backend. Si falla, se restaura el valor anterior y se avisa; un 401 llama a `expireSession`. *Alternativa descartada*: un botón «Guardar», que CA-16 excluye.
 - **Señal de vencida**: un `Alert` con icono (`AlertCircleIcon`) y el texto «Vencida», con `role="status"`. No depende solo del color. Si `isOverdue` es falso no se pinta nada, y tampoco hay ningún aviso por no tener fecha.
-- **404**: `ApiError` con estado 404 → «Esta tarea no existe.». Requiere distinguir el 404 en `toApiError`, que hoy lo convierte en el mensaje genérico del servidor.
+- **404**: `ApiError` con estado 404 → «Esta tarea no existe.». Requiere distinguir el 404 en `toApiError`, que hoy lo convierte en el mensaje genérico del servidor. El backend ya responde el 404 de tareas con `{ errors: [...] }`.
 
 ## Risks / Trade-offs
 

@@ -14,7 +14,7 @@
 ## 3. API (backend)
 
 - [ ] 3.1 Ampliar los validadores: `dueDate` como texto `YYYY-MM-DD` validado como día existente, nullable y opcional, en la creación y en la actualización; quitar `requiredIfMissing` de `status`. Comprobar antes en los `.d.ts` cómo conserva VineJS una clave con `null` y cómo se lanza un `E_VALIDATION_ERROR`. Verificar con `npm run typecheck`.
-- [ ] 3.2 Actualizar `TasksController`: el día de referencia en `index`, `store` y `update`; `dueDate` en `store` y en `update`; el 422 de «nada que actualizar» cuando no llega ninguna de las tres claves; y la nueva acción `show` (`findOrFail` + `preload`). Registrar `GET /tasks/:id` con matcher numérico en el grupo protegido. Arrancar el dev server para regenerar `.adonisjs/` y verificar con `node ace list:routes` que hay exactamente cuatro rutas de tareas.
+- [ ] 3.2 Actualizar `TasksController`: el día de referencia en `index`, `store` y `update`; `dueDate` en `store` y en `update`; el 422 de «nada que actualizar» cuando no llega ninguna de las tres claves; y la nueva acción `show` (`find` + 404 con `{ errors }`, precargando solo `id` y `full_name` del responsable). Registrar `GET /tasks/:id` con matcher numérico en el grupo protegido. Arrancar el dev server para regenerar `.adonisjs/` y verificar con `node ace list:routes` que hay exactamente cuatro rutas de tareas.
 - [ ] 3.3 Comprobar con `curl` contra el dev server los escenarios de API de `specs/tasks/spec.md`:
   - lectura individual 200, 404 con id inexistente y 404 con id no numérico;
   - `dueDate` e `isOverdue` en listar, leer, crear y actualizar;
