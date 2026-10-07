@@ -12,6 +12,8 @@ export type AuthContextValue = {
   login: (payload: LoginPayload) => Promise<void>
   signup: (payload: SignupPayload) => Promise<void>
   logout: () => Promise<void>
+  /** Da por perdida la sesión (p. ej. un 401 en mitad del uso) y explica por qué en el login. */
+  expireSession: (message: string) => void
 }
 
 /**

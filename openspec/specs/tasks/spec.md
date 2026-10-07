@@ -1,10 +1,9 @@
-# Spec Delta
+# tasks Specification
 
 ## Purpose
-
 Mantener una sola lista de tareas compartida por todo el equipo, en la que cada tarea muestra su título, su responsable y su estado, para saber de un vistazo quién está en qué; y permitir alimentarla creando tareas con solo un título y cambiando su estado sin salir de la lista.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Acceso a la API de tareas solo con sesión
 
@@ -38,6 +37,11 @@ El sistema SHALL devolver en `GET /api/v1/tasks` todas las tareas del espacio, l
 
 - **WHEN** otra persona ha creado una tarea y es su responsable
 - **THEN** esa tarea aparece en la lista de cualquier otra cuenta
+
+#### Scenario: No hay tareas privadas
+
+- **WHEN** se crea una tarea por cualquier vía, con cualquier cuerpo de petición
+- **THEN** la tarea aparece en el listado de todas las cuentas, porque no existe ningún dato ni opción que la oculte a otras
 
 #### Scenario: Espacio sin tareas
 

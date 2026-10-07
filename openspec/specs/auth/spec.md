@@ -173,7 +173,7 @@ La aplicación web SHALL ofrecer una pantalla «Crea tu cuenta» con los campos 
 #### Scenario: Registro correcto
 
 - **WHEN** una persona rellena el formulario con datos válidos y pulsa «Crear cuenta»
-- **THEN** queda con la sesión iniciada y llega directamente a su perfil
+- **THEN** queda con la sesión iniciada y llega directamente a la lista de tareas del equipo
 
 #### Scenario: Nombre vacío o solo con espacios
 
@@ -214,7 +214,7 @@ La aplicación web SHALL ofrecer una pantalla «Inicia sesión» con los campos 
 #### Scenario: Credenciales correctas
 
 - **WHEN** una persona introduce el email y la contraseña de su cuenta y pulsa «Entrar»
-- **THEN** queda con la sesión iniciada y llega a su perfil
+- **THEN** queda con la sesión iniciada y llega a la lista de tareas del equipo
 
 #### Scenario: Credenciales incorrectas
 
@@ -262,7 +262,7 @@ La aplicación web SHALL mostrar a la persona con sesión iniciada sus iniciales
 
 ### Requirement: Acceso a las pantallas según la sesión
 
-La aplicación web SHALL permitir ver el perfil solo con sesión iniciada, y las pantallas de inicio de sesión y registro solo sin ella.
+La aplicación web SHALL permitir ver el perfil y la lista de tareas solo con sesión iniciada, y las pantallas de inicio de sesión y registro solo sin ella. La lista de tareas es la pantalla de inicio de la aplicación.
 
 #### Scenario: Perfil sin sesión
 
@@ -272,12 +272,12 @@ La aplicación web SHALL permitir ver el perfil solo con sesión iniciada, y las
 #### Scenario: Inicio de sesión o registro con sesión
 
 - **WHEN** una persona con sesión iniciada abre la pantalla de inicio de sesión o la de registro
-- **THEN** se le lleva a su perfil
+- **THEN** se le lleva a la lista de tareas del equipo
 
 #### Scenario: Dirección desconocida
 
 - **WHEN** se abre una dirección de la aplicación que no existe, incluida la raíz
-- **THEN** se lleva al perfil, que a su vez lleva al inicio de sesión si no hay sesión
+- **THEN** se lleva a la lista de tareas del equipo, que a su vez lleva al inicio de sesión si no hay sesión
 
 #### Scenario: Comprobación de la sesión en curso
 
